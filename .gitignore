@@ -1,3 +1,6 @@
 output*
 .DS_Store
 .venv/
+lhe_analyser.egg-info/
+build/
+lhe_analyser/__pycache__/
