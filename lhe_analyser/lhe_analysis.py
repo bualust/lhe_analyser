@@ -27,6 +27,15 @@ def main():
         metavar="output_plots",
         help="Name of dir containing plots",
     )
+    parser.add_argument(
+        "--i",
+        dest="indir",
+        type=str,
+        required=False,
+        metavar="lhe-files/",
+        help="Name of dir containing plots",
+        default="lhe-files/",
+    )
 
     args = parser.parse_args()
 
@@ -35,8 +44,6 @@ def main():
     prefix = "SMEFTsim_massless"
     processes = {"SM HZ -> bb ee":f"{prefix}_SM_mbb110",
                  "Alternative":f"{prefix}_alt"}
-
-    lhe_dir = "lhe-files/"
 
     process_plot = {}
     variables = {"M(bb)":[100,95,150],
@@ -57,7 +64,7 @@ def main():
                  }
 
     for key, value in processes.items():
-        lhe_file = f"{lhe_dir}{value}_unweighted_events.lhe"
+        lhe_file = f"{args.indir}{value}_unweighted_events.lhe"
         allgood(f"Reading file:\n{lhe_file}")
         allgood(f"Number of events: {pylhe.read_num_events(lhe_file)}")
 
