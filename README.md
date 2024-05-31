@@ -8,5 +8,5 @@ In the current configuration it compares different LHE files over several distri
 ```bash
 source setup.sh
 pip install .
-lhe-analyser --o output_plots
+lhe-analyser --o output-plots-test --i lhe-files/ --c config.yaml
 ```
