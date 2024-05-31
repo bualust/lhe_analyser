@@ -7,6 +7,7 @@ import mplhep as hep
 from matplotlib.gridspec import GridSpec
 import os
 import argparse
+import yaml
 
 def main():
     parser = argparse.ArgumentParser(description="Process some integers.")
@@ -33,17 +34,25 @@ def main():
         type=str,
         required=False,
         metavar="lhe-files/",
-        help="Name of dir containing plots",
+        help="Name of dir containing lhe files",
         default="lhe-files/",
+    )
+    parser.add_argument(
+        "--c",
+        dest="config",
+        type=str,
+        required=True,
+        metavar="config.yaml",
+        help="Configuration file with processes to compare",
     )
 
     args = parser.parse_args()
 
     allgood(f"Running of {args.nevents} and saving plots in {args.outdir}")
 
-    prefix = "SMEFTsim_massless"
-    processes = {"SM HZ -> bb ee":f"{prefix}_SM_mbb110",
-                 "Alternative":f"{prefix}_alt"}
+    with open(args.config) as yaml_file:
+        yaml_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
+    processes = yaml_config
 
     process_plot = {}
     variables = {"M(bb)":[100,95,150],
@@ -64,7 +73,7 @@ def main():
                  }
 
     for key, value in processes.items():
-        lhe_file = f"{args.indir}{value}_unweighted_events.lhe"
+        lhe_file = f"{args.indir}{value}unweighted_events.lhe"
         allgood(f"Reading file:\n{lhe_file}")
         allgood(f"Number of events: {pylhe.read_num_events(lhe_file)}")
 
