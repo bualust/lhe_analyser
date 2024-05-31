@@ -64,58 +64,30 @@ def main():
         pylhe_file = pylhe.read_lhe_with_attributes(lhe_file)
         events = pylhe.to_awkward(pylhe_file)
 
-        mbb = []
-        mee = []
-        ptb = []
-        ptantib = []
-        deltarbb = []
-        deltarbb_ee = []
-        deltarb_ee = []
-        deltarantib_ee = []
-        ptbspin = []
-        ptantibspin = []
-        bspin = []
-        antibspin = []
-        deltaang_bb = []
-        deltaang_bb_ee = []
-
         plots = {}
+        if args.nevents != -1:
+            particles = events.particles[:args.nevents]
+            plots["weight"] = events.eventinfo.weight[:args.nevents]
+        else:
+            particles = events.particles
+            plots["weight"] = events.eventinfo.weight
 
-        for i, evn in enumerate(events):
-            if i == args.nevents:
-                break
-            particles = evn.particles
-            stable_parts = stable_particles(particles)
-            mbb.append(mass_bb(stable_parts))
-            mee.append(mass_ee(stable_parts))
-            ptb.append(pt_b(stable_parts,1))
-            ptantib.append(pt_b(stable_parts,-1))
-            deltarbb.append(deltar_bb(stable_parts))
-            deltarbb_ee.append(deltar_bb_ee(stable_parts,0))
-            deltarb_ee.append(deltar_bb_ee(stable_parts,1))
-            deltarantib_ee.append(deltar_bb_ee(stable_parts,-1))
-            ptbspin.append(pt_b_times_spin(stable_parts,1))
-            ptantibspin.append(pt_b_times_spin(stable_parts,-1))
-            bspin.append(b_spin(stable_parts,1))
-            antibspin.append(b_spin(stable_parts,-1))
-            deltaang_bb.append(deltaangle_bb(stable_parts))
-            deltaang_bb_ee.append(cross_bb_ee(stable_parts))
+        stable_parts = stable_particles(particles)
 
-        plots["M(bb)"] = mbb
-        plots["M(ee)"] = mee
-        plots["pT(b)"] = ptb
-        plots["pT(anti-b)"] = ptantib
-        plots["DeltaR(bb)"] = deltarbb
-        plots["DeltaR(bb,ee)"] = deltarbb_ee
-        plots["DeltaR(b,ee)"] = deltarb_ee
-        plots["DeltaR(anti-b,ee)"] = deltarantib_ee
-        plots["pT(b) x spin"] = ptbspin
-        plots["pT(anti-b) x spin"] = ptantibspin
-        plots["spin(b)"] = bspin
-        plots["spin(anti-b)"] = antibspin
-        plots["DeltaAngle(bb)"] = deltaang_bb
-        plots["DeltaAngle(bxb,ee)"] = deltaang_bb_ee
-        plots["weight"] = events.eventinfo.weight
+        plots["M(bb)"] = mass_bb(stable_parts)
+        plots["M(ee)"] = mass_ee(stable_parts)
+        plots["pT(b)"] = pt_b(stable_parts,1)
+        plots["pT(anti-b)"] = pt_b(stable_parts,-1)
+        plots["DeltaR(bb)"] = deltar_bb(stable_parts)
+        plots["DeltaR(bb,ee)"] = deltar_bb_ee(stable_parts,0)
+        plots["DeltaR(b,ee)"] = deltar_bb_ee(stable_parts,1)
+        plots["DeltaR(anti-b,ee)"] = deltar_bb_ee(stable_parts,-1)
+        plots["pT(b) x spin"] = pt_b_times_spin(stable_parts,1)
+        plots["pT(anti-b) x spin"] = pt_b_times_spin(stable_parts,-1)
+        plots["spin(b)"] = b_spin(stable_parts,1)
+        plots["spin(anti-b)"] = b_spin(stable_parts,-1)
+        plots["DeltaAngle(bb)"] = deltaangle_bb(stable_parts)
+        plots["DeltaAngle(bxb,ee)"] = cross_bb_ee(stable_parts)
 
         process_plot[key] = plots
 
@@ -154,74 +126,74 @@ def stable_particles(particles):
 def mass_bb(stable_parts):
     b_quark = stable_parts[stable_parts.id == 5]
     antib_quark = stable_parts[stable_parts.id == -5]
-    mbb = (b_quark.vector[0]+antib_quark.vector[0]).mass
-    return round(mbb,2)
+    mbb = (b_quark.vector[:]+antib_quark.vector[:]).mass
+    return ak.flatten(mbb)
 
 def deltar_bb_ee(stable_parts,which):
     b_quark = stable_parts[stable_parts.id == 5]
     antib_quark = stable_parts[stable_parts.id == -5]
     el = stable_parts[stable_parts.id == 11]
     antiel = stable_parts[stable_parts.id == -11]
-    bb_pair = b_quark.vector[0].add(antib_quark.vector[0])
-    ee_pair = el.vector[0].add(antiel.vector[0])
+    bb_pair = b_quark.vector[:].add(antib_quark.vector[:])
+    ee_pair = el.vector[:].add(antiel.vector[:])
     deltar = bb_pair.deltaR(ee_pair)
-    deltarb = b_quark.vector[0].deltaR(ee_pair)
-    deltarantib = antib_quark.vector[0].deltaR(ee_pair)
+    deltarb = b_quark.vector[:].deltaR(ee_pair)
+    deltarantib = antib_quark.vector[:].deltaR(ee_pair)
     if which == 0:
-        return round(deltar,2)
+        return ak.flatten(deltar)
     elif which == 1:
-        return round(deltarb,2)
+        return ak.flatten(deltarb)
     elif which == -1:
-        return round(deltarantib,2)
+        return ak.flatten(deltarantib)
 
 def deltar_bb(stable_parts):
     b_quark = stable_parts[stable_parts.id == 5]
     antib_quark = stable_parts[stable_parts.id == -5]
-    deltar = (b_quark.vector[0].deltaR(antib_quark.vector[0]))
-    return round(deltar,2)
+    deltar = (b_quark.vector[:].deltaR(antib_quark.vector[:]))
+    return ak.flatten(deltar)
 
 def cross_bb_ee(stable_parts):
     b_quark = stable_parts[stable_parts.id == 5]
     antib_quark = stable_parts[stable_parts.id == -5]
-    b_quark_3d = b_quark.vector[0].to_Vector3D()
-    antib_quark_3d = antib_quark.vector[0].to_Vector3D()
+    b_quark_3d = b_quark.vector[:].to_Vector3D()
+    antib_quark_3d = antib_quark.vector[:].to_Vector3D()
     cross_bb = (b_quark_3d.cross(antib_quark_3d))
 
     el = stable_parts[stable_parts.id == 11]
     antiel = stable_parts[stable_parts.id == -11]
-    el_3d = el.vector[0].to_Vector3D()
-    antiel_3d = antiel.vector[0].to_Vector3D()
+    el_3d = el.vector[:].to_Vector3D()
+    antiel_3d = antiel.vector[:].to_Vector3D()
     ee_pair = el_3d.add(antiel_3d)
 
     deltaangle = ee_pair.deltaangle(cross_bb)
-    return deltaangle
+    return ak.flatten(deltaangle)
 
 def deltaangle_bb(stable_parts):
     b_quark = stable_parts[stable_parts.id == 5]
     antib_quark = stable_parts[stable_parts.id == -5]
-    deltaangle = (b_quark.vector[0].deltaangle(antib_quark.vector[0]))
-    return deltaangle
+    deltaangle = (b_quark.vector[:].deltaangle(antib_quark.vector[:]))
+    return ak.flatten(deltaangle)
 
 def mass_ee(stable_parts):
     el = stable_parts[stable_parts.id == 11]
     antiel = stable_parts[stable_parts.id == -11]
-    mee = (el.vector[0]+antiel.vector[0]).mass
-    return round(mee,2)
+    mee = (el.vector[:]+antiel.vector[:]).mass
+    return ak.flatten(mee)
 
 def pt_b(stable_parts,charge):
     b_quark = stable_parts[stable_parts.id == 5*charge]
-    pt_b = (b_quark.vector[0]).pt
-    return round(pt_b,2)
+    pt_b = (b_quark.vector[:]).pt
+    return ak.flatten(pt_b)
 
 def b_spin(stable_parts,charge):
     b_quark = stable_parts[stable_parts.id == 5*charge]
-    spin_b = b_quark.spin[0]
-    return spin_b
+    spin_b = b_quark.spin[:]
+    return ak.flatten(spin_b)
 
 def pt_b_times_spin(stable_parts,charge):
     b_quark = stable_parts[stable_parts.id == 5*charge]
-    pt_b = ((b_quark.vector[0]).pt)*b_quark.spin[0]
-    return round(pt_b,2)
+    pt_b = ((b_quark.vector[:]).pt)*b_quark.spin[:]
+    return ak.flatten(pt_b)
 
 class bcolors:
     INFO = '\033[95m' #PURPLE
