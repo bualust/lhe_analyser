@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lhe-analyser"
+version = "0.0.1"
+dependencies = [
+    "awkward",
+    "pylhe",
+    "boost_histogram",
+    "matplotlib",
+    "mplhep",
+    "itertools",
+]
+
+[project.optional-dependencies]
+dev = ["ruff"]
+
+[project.scripts]
+lhe-analyser = "lhe_analyser:main"
