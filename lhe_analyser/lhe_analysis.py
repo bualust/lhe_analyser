@@ -1,5 +1,4 @@
 import awkward as ak
-import itertools
 import pylhe
 import math
 import boost_histogram as bh
@@ -58,7 +57,7 @@ def main():
                  }
 
     for key, value in processes.items():
-        lhe_file = f"_unweighted_events.lhe"
+        lhe_file = f"{lhe_dir}{value}_unweighted_events.lhe"
         allgood(f"Reading file:\n{lhe_file}")
         allgood(f"Number of events: {pylhe.read_num_events(lhe_file)}")
 
