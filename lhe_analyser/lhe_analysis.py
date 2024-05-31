@@ -34,11 +34,10 @@ def main():
     allgood(f"Running of {args.nevents} and saving plots in {args.outdir}")
 
     prefix = "SMEFTsim_massless"
-    processes = {#"SM (mbb>110)":f"{prefix}_SM_mbb110/Events/run_02/",
-                 "NP^2=1 pure odd":f"{prefix}_NP21_pure_odd/Events/run_04/"}
-                 #"NP^2=2 pure odd":f"{prefix}_NP22_pure_odd/Events/run_02/"}
+    processes = {"SM HZ -> bb ee":f"{prefix}_SM_mbb110",
+                 "Alternative":f"{prefix}_alt"}
 
-    lhe_dir = "/Users/user/madgraph/mg5amcnlo/"
+    lhe_dir = "lhe-files/"
 
     process_plot = {}
     variables = {"M(bb)":[100,95,150],
@@ -59,7 +58,7 @@ def main():
                  }
 
     for key, value in processes.items():
-        lhe_file = f"{lhe_dir}{value}/unweighted_events.lhe"
+        lhe_file = f"_unweighted_events.lhe"
         allgood(f"Reading file:\n{lhe_file}")
         allgood(f"Number of events: {pylhe.read_num_events(lhe_file)}")
 
