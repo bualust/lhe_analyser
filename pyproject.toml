@@ -12,6 +12,7 @@ dependencies = [
     "matplotlib",
     "mplhep",
     "scipy",
+    "pyyaml",
 ]
 
 [project.optional-dependencies]
