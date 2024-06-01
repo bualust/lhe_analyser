@@ -45,6 +45,15 @@ def main():
         metavar="config.yaml",
         help="Configuration file with processes to compare",
     )
+    parser.add_argument(
+        "--hn",
+        dest="histnorm",
+        type=bool,
+        required=False,
+        metavar="True",
+        help="Set to True if you want all distributions to have same normalisation.",
+        default=True
+    )
 
     args = parser.parse_args()
 
@@ -125,7 +134,7 @@ def main():
             else:
                 hist.fill(plots_dic[var], weight=plots_dic["weight"])
             hep.histplot(
-                hist, yerr=False, histtype="step", ax=main, density=True, label=proc
+                hist, yerr=False, histtype="step", ax=main, density=args.histnorm, label=proc
             )
 
         plt.xlabel(var)
