@@ -48,14 +48,18 @@ def main():
     parser.add_argument(
         "--hn",
         dest="histnorm",
-        type=bool,
+        type=str,
         required=False,
-        metavar="True",
+        metavar="True or False",
         help="Set to True if you want all distributions to have same normalisation.",
         default=True,
     )
 
     args = parser.parse_args()
+    if args.histnorm == "True" or args.histnorm == "true":
+        args.histnorm = True
+    elif args.histnorm == "False" or args.histnorm == "false":
+        args.histnorm = False
 
     allgood(f"Running of {args.nevents} and saving plots in {args.outdir}")
 

@@ -1,2 +1,3 @@
-SM : "SMEFTsim_massless_SM_mbb110_"
-alt: "SMEFTsim_massless_alt_"
+SM   : "SM/Events/run_02/"
+NP21 : "NP21_ODD/Events/run_02/"
+NP22 : "NP22_ODD/Events/run_02/"
