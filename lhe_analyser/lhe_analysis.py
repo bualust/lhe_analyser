@@ -8,6 +8,7 @@ import os
 import argparse
 import yaml
 
+
 def main():
     parser = argparse.ArgumentParser(description="Process some integers.")
     parser.add_argument(
@@ -51,7 +52,7 @@ def main():
         required=False,
         metavar="True",
         help="Set to True if you want all distributions to have same normalisation.",
-        default=True
+        default=True,
     )
 
     args = parser.parse_args()
@@ -137,7 +138,12 @@ def main():
             else:
                 hist.fill(plots_dic[var], weight=plots_dic["weight"])
             hep.histplot(
-                hist, yerr=False, histtype="step", ax=main, density=args.histnorm, label=proc
+                hist,
+                yerr=False,
+                histtype="step",
+                ax=main,
+                density=args.histnorm,
+                label=proc,
             )
 
         plt.xlabel(var)
