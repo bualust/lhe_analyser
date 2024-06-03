@@ -1,3 +1,17 @@
-SM   : "SM/Events/run_02/"
-NP21 : "NP21_ODD/Events/run_02/"
-NP22 : "NP22_ODD/Events/run_02/"
+processes:
+  SM   : "SM/Events/run_02/"
+  NP21 : "NP21_ODD/Events/run_02/"
+  NP22 : "NP22_ODD/Events/run_02/"
+histos:
+    title: M(bb)
+    function: mass_2particles
+    args:
+      - part_status: stable_parts
+      - part1: 5
+      - part2: -5
+    title: M(ee)
+    function: mass_2particles
+    args:
+      - part_status: stable_parts
+      - part1: 11
+      - part2: -11
